@@ -1,14 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AhorroGrid from "./AhorroGrid";
 import InputField from "./InputField";
+import { storage, AhorroData } from "../utils/localStorage";
 
 export default function AhorroForm() {
-  const [dias, setDias] = useState<number>(100);
-  const [meta, setMeta] = useState<number>(5000000);
-  const [valores, setValores] = useState<number[]>([]);
+  // Estado para controlar la hidratación
+  const [isHydrated, setIsHydrated] = useState(false);
+  
+  // Cargar datos desde localStorage al inicializar
+  const [dias, setDias] = useState<number>(() => {
+    if (typeof window === 'undefined') return 30;
+    const saved = storage.load();
+    return saved?.dias || 30;
+  });
+  
+  const [meta, setMeta] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1000;
+    const saved = storage.load();
+    return saved?.meta || 1000;
+  });
+  
+  const [valores, setValores] = useState<number[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const saved = storage.load();
+    return saved?.valores || [];
+  });
+
+  const [completados, setCompletados] = useState<boolean[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const saved = storage.load();
+    return saved?.completados || [];
+  });
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+
+  // Efecto para marcar como hidratado después del primer render
+  useEffect(() => {
+    const timer = setTimeout(() => setIsHydrated(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Guardar automáticamente cuando cambian los valores
+  useEffect(() => {
+    if (valores.length > 0) {
+      const data: AhorroData = { dias, meta, valores, completados };
+      storage.save(data);
+    }
+  }, [dias, meta, valores, completados]);
+
+  const nuevaPlantilla = () => {
+    storage.clear();
+    setDias(100);
+    setMeta(5000000);
+    setValores([]);
+    setCompletados([]);
+  };
 
   const generar = async (): Promise<void> => {
     // Validar que los días sean al menos 1
@@ -44,6 +91,7 @@ export default function AhorroForm() {
     });
     
     setValores(ajustado);
+    setCompletados(new Array(ajustado.length).fill(false));
     setIsGenerating(false);
   };
 
@@ -83,11 +131,11 @@ export default function AhorroForm() {
                 placeholder="5000000"
               />
 
-              <div className="pt-2">
+              <div className="pt-2 space-y-3">
                 <button 
                   onClick={generar} 
                   disabled={isGenerating}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-4 text-base shadow-lg transition-all duration-200 transform hover:scale-[1.02] rounded-lg"
+                  className="w-full bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-4 text-base shadow-lg transition-all duration-200 transform hover:scale-[1.02] rounded-lg"
                 >
                   {isGenerating ? (
                     <div className="flex items-center justify-center gap-2">
@@ -95,22 +143,33 @@ export default function AhorroForm() {
                       Generando...
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-center gap-2 hover:cursor-pointer">
                       <span className="text-xl">✨</span>
                       Generar Desafío
                     </div>
                   )}
                 </button>
+
+                {isHydrated && valores.length > 0 && (
+                  <button 
+                    onClick={nuevaPlantilla}
+                    className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 text-sm shadow-md transition-all duration-200 transform hover:scale-[1.02] rounded-lg"
+                  >
+                    <div className="flex items-center justify-center gap-2 hover:cursor-pointer">
+                      Iniciar Nueva Plantilla
+                    </div>
+                  </button>
+                )}
               </div>
 
-              {valores.length > 0 && (
+              {isHydrated && valores.length > 0 && (
                 <div className="pt-4 border-t border-amber-200">
                   <div className="text-center space-y-2">
                     <div className="bg-amber-50 rounded-lg p-3">
-                      <p className="text-xs text-amber-600 font-medium">
+                      <p className="text-lg text-amber-600 font-medium">
                         Promedio diario
                       </p>
-                      <p className="text-sm font-bold text-amber-800">
+                      <p className="text-2xl font-bold text-amber-800">
                         {formatCurrency(Math.round(meta / dias))}
                       </p>
                     </div>
@@ -123,7 +182,14 @@ export default function AhorroForm() {
 
         {/* Grid de ahorro - ocupa 8/12 del espacio (equivalente a col-8 de Bootstrap) */}
         <div className="lg:col-span-8">
-          {valores.length > 0 && <AhorroGrid valores={valores} meta={meta} />}
+          {isHydrated && valores.length > 0 && (
+            <AhorroGrid 
+              valores={valores} 
+              meta={meta} 
+              completados={completados}
+              setCompletados={setCompletados}
+            />
+          )}
         </div>
       </div>
     </div>

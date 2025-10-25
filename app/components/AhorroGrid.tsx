@@ -6,8 +6,7 @@ import ProgressBar from "./ProgressBar";
 import DayButton from "./DayButton";
 import { AhorroGridProps } from "../types/interfaces";
 
-export default function AhorroGrid({ valores, meta }: AhorroGridProps) {
-  const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
+export default function AhorroGrid({ valores, meta, completados, setCompletados }: AhorroGridProps) {
   const [animatingDay, setAnimatingDay] = useState<number | null>(null);
 
   const toggleDay = async (dayIndex: number): Promise<void> => {
@@ -16,15 +15,9 @@ export default function AhorroGrid({ valores, meta }: AhorroGridProps) {
     // Pequeño delay para la animación
     await new Promise(resolve => setTimeout(resolve, 150));
     
-    setCompletedDays(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(dayIndex)) {
-        newSet.delete(dayIndex);
-      } else {
-        newSet.add(dayIndex);
-      }
-      return newSet;
-    });
+    const newCompletados = [...completados];
+    newCompletados[dayIndex] = !newCompletados[dayIndex];
+    setCompletados(newCompletados);
     
     setAnimatingDay(null);
   };
@@ -39,10 +32,11 @@ export default function AhorroGrid({ valores, meta }: AhorroGridProps) {
   };
 
   const totalSaved = valores
-    .filter((_, index) => completedDays.has(index))
+    .filter((_, index) => completados[index])
     .reduce((sum, value) => sum + value, 0);
 
-  const progress = (completedDays.size / valores.length) * 100;
+  const completedCount = completados.filter(Boolean).length;
+  const progress = (completedCount / valores.length) * 100;
 
   return (
     <div className="backdrop-blur-sm bg-white/90 border border-amber-200 shadow-xl rounded-lg overflow-hidden flex flex-col h-[90vh]">
@@ -71,7 +65,7 @@ export default function AhorroGrid({ valores, meta }: AhorroGridProps) {
           />
           <StatsCard 
             label="Días Completados" 
-            value={`${completedDays.size}/${valores.length}`} 
+            value={`${completedCount}/${valores.length}`} 
             color="blue" 
           />
           <StatsCard 
@@ -91,7 +85,7 @@ export default function AhorroGrid({ valores, meta }: AhorroGridProps) {
             <DayButton
               key={index}
               value={valor}
-              isCompleted={completedDays.has(index)}
+              isCompleted={completados[index] || false}
               isAnimating={animatingDay === index}
               onClick={() => toggleDay(index)}
               formatCurrency={formatCurrency}

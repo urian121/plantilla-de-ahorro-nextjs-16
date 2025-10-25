@@ -2,6 +2,8 @@
 export interface AhorroGridProps {
   valores: number[];
   meta: number;
+  completados: boolean[];
+  setCompletados: (completados: boolean[]) => void;
 }
 
 export interface StatsCardProps {

@@ -1,4 +1,5 @@
 import { InputFieldProps } from "../types/interfaces";
+import { numericInputValidation } from "../utils/inputValidation";
 
 export default function InputField({ 
   label, 
@@ -15,11 +16,16 @@ export default function InputField({
       </label>
       <input
         type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         value={value || ''}
         onChange={(e) => {
           const inputValue = +e.target.value;
           onChange(inputValue || 0);
         }}
+        onKeyDown={numericInputValidation.handleKeyPress}
+        onPaste={numericInputValidation.handlePaste}
+        onInput={numericInputValidation.handleInput}
         placeholder={placeholder}
         min={min}
         step={step}

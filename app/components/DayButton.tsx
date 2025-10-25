@@ -11,19 +11,19 @@ export default function DayButton({
     <button
       onClick={onClick}
       className={`
-        relative group aspect-square rounded-xl border-2 transition-all duration-200 transform hover:scale-105 active:scale-95 min-h-[80px]
+        relative group aspect-square rounded-xl transition-all duration-200 transform hover:scale-105 hover:cursor-pointer active:scale-95 min-h-[80px]
         ${isCompleted 
-          ? 'bg-linear-to-br from-green-400 to-emerald-500 border-green-500 text-white shadow-lg shadow-green-500/25' 
-          : 'bg-white hover:bg-amber-50 border-amber-200 hover:border-amber-300 text-amber-800 shadow-sm hover:shadow-md'
+          ? 'bg-linear-to-br from-green-400 to-emerald-500 text-white shadow-lg shadow-green-500/25' 
+          : 'bg-white hover:bg-amber-50 hover:border-amber-300 text-amber-800 shadow-sm hover:shadow-md'
         }
         ${isAnimating ? 'animate-pulse scale-110' : ''}
       `}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-        <div className={`text-xs ${isCompleted ? 'text-white' : 'text-amber-600'} font-medium mb-1`}>
+        <div className={`text-lg ${isCompleted ? 'text-white' : 'text-amber-600'} font-medium mb-1`}>
           $
         </div>
-        <div className={`text-sm sm:text-base font-bold ${isCompleted ? 'text-white' : 'text-amber-700'} text-center leading-tight`}>
+        <div className={`text-3xl sm:text-base font-bold ${isCompleted ? 'text-white' : 'text-amber-700'} text-center leading-tight`}>
           {formatCurrency(value).replace('$', '')}
         </div>
       </div>
