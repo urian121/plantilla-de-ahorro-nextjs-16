@@ -4,6 +4,20 @@ export interface AhorroGridProps {
   meta: number;
   completados: boolean[];
   setCompletados: (completados: boolean[]) => void;
+  onDownloadPDF?: () => void;
+  onNuevaPlantilla?: () => void;
+}
+
+export interface PigIconProps {
+  size?: number;
+  className?: string;
+}
+
+export interface PrintableTemplateProps {
+  title: string;
+  valores: number[];
+  meta: number;
+  completados: boolean[];
 }
 
 export interface StatsCardProps {

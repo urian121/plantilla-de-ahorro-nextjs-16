@@ -1,13 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import { RotateCcw } from "lucide-react";
 import AhorroGrid from "./AhorroGrid";
 import InputField from "./InputField";
+import PrintableTemplate from "./PrintableTemplate";
 import { storage, AhorroData } from "../utils/localStorage";
+import { formatCurrency } from "../utils/currency";
 
 export default function AhorroForm() {
   // Estado para controlar la hidratación
   const [isHydrated, setIsHydrated] = useState(false);
+  
+  // Referencia para el PDF
+  const printRef = useRef<HTMLDivElement>(null);
   
   // Cargar datos desde localStorage al inicializar
   const [dias, setDias] = useState<number>(() => {
@@ -95,14 +102,21 @@ export default function AhorroForm() {
     setIsGenerating(false);
   };
 
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(Math.round(value));
-  };
+
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Mi Plan de Ahorro",
+    pageStyle: `
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+      @media print {
+        body { -webkit-print-color-adjust: exact; }
+      }
+    `
+  });
 
   return (
     <div className="w-full max-w-none space-y-6">
@@ -131,11 +145,11 @@ export default function AhorroForm() {
                 placeholder="5000000"
               />
 
-              <div className="pt-2 space-y-3">
+              <div className="pt-2 space-y-3 flex justify-center">
                 <button 
                   onClick={generar} 
                   disabled={isGenerating}
-                  className="w-full bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-4 text-base shadow-lg transition-all duration-200 transform hover:scale-[1.02] rounded-lg"
+                  className="bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2 px-6 text-base shadow-lg transition-all duration-200 transform hover:scale-[1.02] rounded-lg"
                 >
                   {isGenerating ? (
                     <div className="flex items-center justify-center gap-2">
@@ -149,17 +163,6 @@ export default function AhorroForm() {
                     </div>
                   )}
                 </button>
-
-                {isHydrated && valores.length > 0 && (
-                  <button 
-                    onClick={nuevaPlantilla}
-                    className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 text-sm shadow-md transition-all duration-200 transform hover:scale-[1.02] rounded-lg"
-                  >
-                    <div className="flex items-center justify-center gap-2 hover:cursor-pointer">
-                      Iniciar Nueva Plantilla
-                    </div>
-                  </button>
-                )}
               </div>
 
               {isHydrated && valores.length > 0 && (
@@ -188,10 +191,26 @@ export default function AhorroForm() {
               meta={meta} 
               completados={completados}
               setCompletados={setCompletados}
+              onDownloadPDF={handlePrint}
+              onNuevaPlantilla={nuevaPlantilla}
             />
           )}
         </div>
       </div>
+
+      {/* Componente oculto para imprimir */}
+      {isHydrated && (
+        <div style={{ display: 'none' }}>
+          <div ref={printRef}>
+            <PrintableTemplate 
+              title="Mi Plan de Ahorro"
+              valores={valores}
+              meta={meta}
+              completados={completados}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

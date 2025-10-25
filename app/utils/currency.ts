@@ -1,0 +1,11 @@
+/**
+ * Utilidad para formatear valores monetarios en pesos colombianos
+ */
+export const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.round(value));
+};

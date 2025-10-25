@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Download, Plus } from "lucide-react";
 import StatsCard from "./StatsCard";
 import ProgressBar from "./ProgressBar";
 import DayButton from "./DayButton";
 import { AhorroGridProps } from "../types/interfaces";
+import { formatCurrency } from "../utils/currency";
 
-export default function AhorroGrid({ valores, meta, completados, setCompletados }: AhorroGridProps) {
+export default function AhorroGrid({ valores, meta, completados, setCompletados, onDownloadPDF, onNuevaPlantilla }: AhorroGridProps) {
   const [animatingDay, setAnimatingDay] = useState<number | null>(null);
 
   const toggleDay = async (dayIndex: number): Promise<void> => {
@@ -22,15 +24,6 @@ export default function AhorroGrid({ valores, meta, completados, setCompletados 
     setAnimatingDay(null);
   };
 
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(Math.round(value));
-  };
-
   const totalSaved = valores
     .filter((_, index) => completados[index])
     .reduce((sum, value) => sum + value, 0);
@@ -42,11 +35,35 @@ export default function AhorroGrid({ valores, meta, completados, setCompletados 
     <div className="backdrop-blur-sm bg-white/90 border border-amber-200 shadow-xl rounded-lg overflow-hidden flex flex-col h-[90vh]">
       {/* Header con estadísticas */}
       <div className="bg-linear-to-r from-amber-50 to-orange-50 border-b border-amber-200 p-6 shrink-0">
-        <div className="text-center mb-6">
+        <div className="text-center mb-6 relative">
           <h2 className="text-2xl font-bold text-amber-800 flex items-center justify-center gap-3 mb-2">
             <span className="text-3xl">💎</span>
             Tu Desafío de Ahorro
           </h2>
+          
+          {/* Botones en la esquina superior derecha */}
+          <div className="absolute top-0 right-0 flex gap-2">
+            {onNuevaPlantilla && (
+              <button
+                onClick={onNuevaPlantilla}
+                className="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 hover:cursor-pointer"
+                title="Nueva Plantilla"
+              >
+                <Plus size={20} />
+              </button>
+            )}
+            
+            {onDownloadPDF && (
+              <button
+                onClick={onDownloadPDF}
+                className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105"
+                title="Descargar PDF"
+              >
+                <Download size={20} />
+              </button>
+            )}
+          </div>
+          
           <p className="text-amber-600 font-medium">
             Haz clic en cada día para marcarlo como completado
           </p>
