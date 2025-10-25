@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 Plantilla de Ahorro - Desafío de Ahorro Interactivo
 
-## Getting Started
+Una aplicación web moderna para crear y gestionar desafíos de ahorro personalizados. Genera automáticamente montos diarios aleatorios que suman tu meta total.
 
-First, run the development server:
+## ✨ Características
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Generación automática**: Crea desafíos con montos aleatorios que suman exactamente tu meta
+- **Interfaz intuitiva**: Diseño moderno y responsivo con animaciones suaves
+- **Seguimiento visual**: Progreso en tiempo real con estadísticas detalladas
+- **Montos redondeados**: Cantidades múltiplos de 50 para facilitar el ahorro
+- **Experiencia móvil**: Optimizado para todos los dispositivos
+
+## 🚀 Tecnologías
+
+- **Next.js 16** - Framework React de última generación
+- **TypeScript** - Tipado estático para mayor confiabilidad
+- **Tailwind CSS** - Estilos utilitarios modernos
+- **Componentes modulares** - Arquitectura escalable y mantenible
+
+## 📱 Funcionalidades
+
+### Configuración del Desafío
+- Define la duración (días del desafío)
+- Establece tu meta de ahorro total
+- Genera montos automáticamente
+
+### Panel de Control
+- Visualiza estadísticas en tiempo real
+- Barra de progreso animada
+- Resumen de días completados y pendientes
+
+### Grid Interactivo
+- Botones para cada día del desafío
+- Marca días como completados con un clic
+- Animaciones visuales de confirmación
+- Scroll vertical para desafíos largos
+
+## 🎯 Uso
+
+1. Ingresa los días del desafío (mínimo 1)
+2. Define tu meta total de ahorro
+3. Haz clic en "Generar Desafío"
+4. Marca cada día como completado al ahorrar el monto
+
+## 🏗️ Estructura
+
+```
+app/
+├── components/          # Componentes reutilizables
+│   ├── AhorroForm.tsx  # Formulario principal
+│   ├── AhorroGrid.tsx  # Grid de días
+│   ├── DayButton.tsx   # Botón individual de día
+│   ├── StatsCard.tsx   # Tarjetas de estadísticas
+│   ├── ProgressBar.tsx # Barra de progreso
+│   └── InputField.tsx  # Campo de entrada
+├── types/              # Definiciones de tipos
+│   └── interfaces.ts   # Interfaces TypeScript
+└── page.tsx           # Página principal
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Desarrollado con ❤️ para hacer el ahorro más divertido y organizado.
