@@ -2,6 +2,8 @@
 
 Una aplicación web moderna y profesional para crear y gestionar desafíos de ahorro personalizados. Genera automáticamente montos diarios aleatorios que suman exactamente tu meta total, con una interfaz elegante y funcionalidades avanzadas.
 
+![Plantilla de Ahorro - Demo](https://raw.githubusercontent.com/urian121/imagenes-proyectos-github/refs/heads/master/plantilla-de-ahorro-nextjs-16.gif)
+
 ## ✨ Características Principales
 
 - **Generación inteligente**: Crea desafíos con montos aleatorios que suman exactamente tu meta
